@@ -1,13 +1,14 @@
 var tests = require('./../compat-table/data-es6').tests;
+var featuresMap = require('./featuresmap').featuresMap;
 
 exports.resolve = function(targets) {
     targets = buildTargets(targets);
     
-    var notSupported = [];
+    var unsupportedFeatures = [];
     
     for (var target of targets) {
         for (var test of tests) {
-            if (!test['subtests'] || notSupported[test.name]) {
+            if (!test['subtests'] || unsupportedFeatures[test.name]) {
                 continue;
             }
             
@@ -35,12 +36,22 @@ exports.resolve = function(targets) {
             }
 
             if (!wasFound || fullySupportedInVersion > target.version) {
-                notSupported.push(test.name);
+                unsupportedFeatures.push(test.name);
             }
         }
     }
     
-    return notSupported;
+    var requiredBabelPlugins = [];
+    
+    for (var feature of unsupportedFeatures) {
+        var babelPlugin = featuresMap[feature];
+        
+        if (babelPlugin !== null && requiredBabelPlugins.indexOf(babelPlugin) === -1) {
+            requiredBabelPlugins.push(babelPlugin);
+        }
+    }
+    
+    return { unsupportedFeatures, requiredBabelPlugins };
 };
 
 function buildTargets(targets) {
@@ -54,13 +65,12 @@ function buildTargets(targets) {
         var match = target.match(/\d+$/);
         
         if (match === null) {
-            return;
+            continue;
         }
     
         retTargets.push({
             name : match.input.substring(0, match.index),
-            version : match[0],
-            notSupported : []
+            version : match[0]
         });
     }
     

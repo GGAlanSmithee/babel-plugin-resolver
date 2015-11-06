@@ -1,3 +1,3 @@
 var resolve = require('./src/index').resolve;
 
-console.log(resolve(['firefox42']));
+console.log(resolve(['ie10']));
