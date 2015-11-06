@@ -1,7 +1,8 @@
+var fs = require('fs');
 var tests = require('./../compat-table/data-es6').tests;
 var featuresMap = require('./featuresmap').featuresMap;
 
-exports.resolve = function(targets) {
+exports.createConfig = function(targets) {
     targets = buildTargets(targets);
     
     var unsupportedFeatures = [];
@@ -93,7 +94,7 @@ exports.resolve = function(targets) {
         }
     }
     
-    return { unsupportedFeatures, requiredBabelPlugins };
+    writeConfig(requiredBabelPlugins);
 };
 
 function buildTargets(targets) {
@@ -117,4 +118,30 @@ function buildTargets(targets) {
     }
     
     return retTargets;
+}
+
+function writeConfig(requiredBabelPlugins) {
+    var str = '{\n';
+    str += '  plugins = [';
+    
+    for (var i in requiredBabelPlugins) {
+        var plugin = requiredBabelPlugins[i];
+        
+        str += '"' + plugin + '"';
+        
+        if (i < requiredBabelPlugins.length - 1) {
+           str += ', ' ;
+        }
+    }
+    
+    str += ' ]\n';
+    str += '}';
+                
+    fs.writeFile('.babelrc', str, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+
+        console.log('Config generated!');
+    });
 }

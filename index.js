@@ -1,5 +1,3 @@
-var resolve = require('./src/index').resolve;
+var createConfig = require('./src/index').createConfig;
 
-var requiredBabelPlugins = resolve(['ie10']).requiredBabelPlugins;
-
-console.log(requiredBabelPlugins);
+createConfig(['ie10']);
