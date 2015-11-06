@@ -11,21 +11,30 @@ exports.resolve = function(targets) {
                 continue;
             }
             
+            var wasFound = false;
             var fullySupportedInVersion = 0;
             
             for (var subtest of test.subtests) {
                 Object.keys(subtest.res).some(function(k) {
-                    if (~k.indexOf(target.name) && subtest.res[k] === true) {
-                        var version = parseInt(k.substring(k.length-2, k.length), 10);
-                        
-                        if (version > fullySupportedInVersion) {
-                            fullySupportedInVersion = version;
+                    if (subtest.res[k] === true) {
+                        if (~k.indexOf(target.name)) {
+                            var version = parseInt(k.substring(k.length-2, k.length), 10);
+                            
+                            if (fullySupportedInVersion <= version) {
+                                fullySupportedInVersion = version;
+                            }
+                            
+                            wasFound = true;
+                        } else if (target.name === 'edge' && ~k.indexOf('ie')) { // if in ie, it's also in edge
+                            fullySupportedInVersion = 12;
+                            
+                            wasFound = true;
                         }
                     }
                 });
             }
-            
-            if (fullySupportedInVersion > target.version) {
+
+            if (!wasFound || fullySupportedInVersion > target.version) {
                 notSupported.push(test.name);
             }
         }
