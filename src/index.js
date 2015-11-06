@@ -8,16 +8,50 @@ exports.resolve = function(targets) {
     
     for (var target of targets) {
         for (var test of tests) {
-            if (!test['subtests'] || unsupportedFeatures[test.name]) {
+            if (unsupportedFeatures[test.name]) {
                 continue;
             }
             
             var wasFound = false;
             var fullySupportedInVersion = 0;
             
-            for (var subtest of test.subtests) {
-                Object.keys(subtest.res).some(function(k) {
-                    if (subtest.res[k] === true) {
+            if (test.subtests) {
+                for (var subtest of test.subtests) {
+                    var subWasFound = false;
+                    var subFullySupportedInVersion = 0;
+                    
+                    Object.keys(subtest.res).some(function(k) {
+                        if (subtest.res[k] === true) {
+                            if (~k.indexOf(target.name)) {
+                                var version = parseInt(k.substring(k.length-2, k.length), 10);
+                                
+                                if (subFullySupportedInVersion <= version) {
+                                    subFullySupportedInVersion = version;
+                                }
+                                
+                                if (fullySupportedInVersion <= version) {
+                                    fullySupportedInVersion = version;
+                                }
+                                
+                                subWasFound = true;
+                                wasFound = true;
+                            } else if (target.name === 'edge' && ~k.indexOf('ie')) { // if in ie, it's also in edge
+                                fullySupportedInVersion = subFullySupportedInVersion = 12;
+                                
+                                subWasFound = true;
+                                wasFound = true;
+                            }
+                        }
+                    });
+                    
+                    if ((subtest.name === 'computed properties' || subtest.name ===  'shorthand properties') &&
+                        (!subWasFound || subFullySupportedInVersion > target.version)) {
+                        unsupportedFeatures.push(subtest.name);
+                    }
+                }
+            } else {
+                Object.keys(test.res).some(function(k) {
+                    if (test.res[k] === true) {
                         if (~k.indexOf(target.name)) {
                             var version = parseInt(k.substring(k.length-2, k.length), 10);
                             
@@ -34,7 +68,7 @@ exports.resolve = function(targets) {
                     }
                 });
             }
-
+            
             if (!wasFound || fullySupportedInVersion > target.version) {
                 unsupportedFeatures.push(test.name);
             }
@@ -45,9 +79,17 @@ exports.resolve = function(targets) {
     
     for (var feature of unsupportedFeatures) {
         var babelPlugin = featuresMap[feature];
-        
-        if (babelPlugin !== null && requiredBabelPlugins.indexOf(babelPlugin) === -1) {
-            requiredBabelPlugins.push(babelPlugin);
+
+        if (babelPlugin instanceof Array) {
+            for (var plugin of babelPlugin) {
+                if (plugin !== null && requiredBabelPlugins.indexOf(plugin) === -1) {
+                    requiredBabelPlugins.push(plugin);
+                }    
+            }
+        } else {
+            if (babelPlugin !== null && requiredBabelPlugins.indexOf(babelPlugin) === -1) {
+                requiredBabelPlugins.push(babelPlugin);
+            }
         }
     }
     

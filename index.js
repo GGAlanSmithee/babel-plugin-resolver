@@ -1,3 +1,5 @@
 var resolve = require('./src/index').resolve;
 
-console.log(resolve(['ie10']));
+var requiredBabelPlugins = resolve(['ie10']).requiredBabelPlugins;
+
+console.log(requiredBabelPlugins);

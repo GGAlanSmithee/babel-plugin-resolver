@@ -1,4 +1,7 @@
 exports.featuresMap = {
+    'shorthand properties' : 'transform-es2015-shorthand-properties',
+    'computed properties' : 'transform-es2015-computed-properties',
+    'HTML-style comments' : null,
     'block-level function declaration' : 'transform-es2015-block-scoped-functions',
     'proper tail calls (tail call optimisation)' : null,
     'default function parameters' : 'transform-es2015-parameters',
@@ -8,7 +11,7 @@ exports.featuresMap = {
     'for..of loops' : 'transform-es2015-for-of',
     'octal and binary literals' : null,
     'template strings' : 'transform-es2015-template-literals',
-    'RegExp "y" and "u" flags' : 'transform-es2015-unicode-regex',
+    'RegExp "y" and "u" flags' : [ 'transform-es2015-unicode-regex', 'transform-es2015-sticky-regex' ],
     'destructuring' : 'transform-es2015-destructuring',
     'Unicode code point escapes' : 'transform-es2015-unicode-regex',
     'new.target' : null,
