@@ -1,0 +1,26 @@
+{
+  "name": "babel-plugin-resolver",
+  "version": "0.0.1",
+  "description": "plugin resolver for babel",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GGAlanSmithee/babel-plugin-resolver.git"
+  },
+  "keywords": [
+    "javascript",
+    "babel",
+    "plugin",
+    "caniuse",
+    "resolver"
+  ],
+  "author": "Alan Smithee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GGAlanSmithee/babel-plugin-resolver/issues"
+  },
+  "homepage": "https://github.com/GGAlanSmithee/babel-plugin-resolver#readme"
+}
