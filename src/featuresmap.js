@@ -1,4 +1,5 @@
 exports.featuresMap = {
+    'RegExp.prototype.compile' : [ 'transform-es2015-unicode-regex', 'transform-es2015-sticky-regex' ],
     'shorthand properties' : 'transform-es2015-shorthand-properties',
     'computed properties' : 'transform-es2015-computed-properties',
     'HTML-style comments' : null,

@@ -2,7 +2,7 @@ var fs = require('fs');
 var tests = require('./../compat-table/data-es6').tests;
 var featuresMap = require('./featuresmap').featuresMap;
 
-exports.createConfig = function(targets) {
+exports.createConfig = function(name, targets) {
     targets = buildTargets(targets);
     
     var unsupportedFeatures = [];
@@ -81,6 +81,10 @@ exports.createConfig = function(targets) {
     for (var feature of unsupportedFeatures) {
         var babelPlugin = featuresMap[feature];
 
+        if (babelPlugin === undefined) {
+            console.log(feature);
+        }
+        
         if (babelPlugin instanceof Array) {
             for (var plugin of babelPlugin) {
                 if (plugin !== null && requiredBabelPlugins.indexOf(plugin) === -1) {
@@ -94,7 +98,7 @@ exports.createConfig = function(targets) {
         }
     }
     
-    writeConfig(requiredBabelPlugins);
+    writeConfig(name, requiredBabelPlugins);
 };
 
 function buildTargets(targets) {
@@ -120,7 +124,7 @@ function buildTargets(targets) {
     return retTargets;
 }
 
-function writeConfig(requiredBabelPlugins) {
+function writeConfig(name, requiredBabelPlugins) {
     var str = '{\n';
     str += '  plugins = [';
     
@@ -136,8 +140,14 @@ function writeConfig(requiredBabelPlugins) {
     
     str += ' ]\n';
     str += '}';
-                
-    fs.writeFile('.babelrc', str, function(err) {
+
+    var filename = '.babelrc';
+    
+    if (name !== 'shared') {
+        filename += '.' + name;
+    }
+    
+    fs.writeFile(filename, str, function(err) {
         if(err) {
             return console.log(err);
         }
