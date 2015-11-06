@@ -1,5 +1,10 @@
 var tests = require('./compat-table/data-es6').tests;
 
+var target = 'chrome46';
+var targetVersion = parseInt(target.substring(target.length-2, target.length), 10);
+var supported = [];
+var notSupported = [];
+
 for (var test of tests) {
     if (!test['subtests']) {
         continue;
@@ -19,5 +24,17 @@ for (var test of tests) {
         });
     }
     
-    console.log(test.name, 'is fully supported in chrome version ', fullySupportedInVersion);
+    if (fullySupportedInVersion <= targetVersion) {
+        supported.push(test.name);
+    } else {
+        notSupported.push(test.name);
+    }
 }
+
+console.log(target);
+
+console.log('supported');
+console.log(supported);
+
+console.log('not supported');
+console.log(notSupported);
